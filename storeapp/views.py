@@ -1,9 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
-import json
-import datetime
+
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
+from .forms import RegistrationForm, ProductForm
+
+import json
+import datetime
 
 
 def store(request):
@@ -13,6 +18,15 @@ def store(request):
     products = Product.objects.all()
     context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/store.html', context)
+
+
+def product_detail(request, product_id):
+    data = cartData(request)
+    cartItems = data['cartItems']
+
+    product = get_object_or_404(Product, pk=product_id)
+    context = {'product': product, 'cartItems': cartItems}
+    return render(request, 'store/product_detail.html', context)
 
 
 def cart(request):
@@ -92,3 +106,65 @@ def processOrder(request):
     )
 
     return JsonResponse('Payment complete!', safe=False)
+
+
+User
+
+
+def userLogin(request):
+    data = cartData(request)
+    cartItems = data['cartItems']
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('store')
+        else:
+            error_message = 'Invalid username or password.'
+            return render(request, 'store/login.html', {'error_message': error_message})
+    context = {'cartItems': cartItems}
+    return render(request, 'store/login.html', context)
+
+
+def userLogout(request):
+    logout(request)
+    return redirect('store')
+
+
+def userRegistration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Customer.objects.create(user=user)
+            login(request, user)
+            return redirect('store')
+    else:
+        form = RegistrationForm()
+    return render(request, 'store/registration.html', {'form': form})
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('store')  # Replace 'store' with your store URL pattern name
+    else:
+        form = ProductForm()
+
+    return render(request, 'store/add_product.html', {'form': form})
+
+
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+
+    # Check if the user is a superuser before allowing deletion
+    if request.user.is_superuser:
+        product.delete()
+
+    return redirect('store')

@@ -1,5 +1,6 @@
 import json
 from .models import *
+from .models import Customer, Order, OrderItem, Product
 
 
 def cookieCart(request):
@@ -74,6 +75,6 @@ def guestOrder(request, data):
         orderItem = OrderItem.objects.create(
             product=product,
             order=order,
-            quantity=(item['quantity'] if item['quantity']>0 else -1*item['quantity']),
+            quantity=(item['quantity'] if item['quantity'] > 0 else -1 * item['quantity']),
         )
     return customer, order
