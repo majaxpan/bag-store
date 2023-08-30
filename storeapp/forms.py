@@ -8,6 +8,16 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Name'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Stock'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'chain_type': forms.Select(attrs={'class': 'form-control'}),
+            'size_type': forms.Select(attrs={'class': 'form-control'}),
+            'color': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 
 class RegistrationForm(UserCreationForm):
