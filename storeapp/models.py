@@ -17,7 +17,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()
     description = models.CharField(max_length=255, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.CharField(max_length=2083, null=True)
 
     # bag specific fields
     CHAIN_CHOICES = [
@@ -50,13 +50,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def imageURL(self):
-        try:
-            url = self.image.url
-        except AttributeError:
-            url = ''
-        return url
+    # @property
+    # def imageURL(self):
+    #     try:
+    #         url = self.image.url
+    #     except AttributeError:
+    #         url = ''
+    #     return url
 
 
 class Order(models.Model):

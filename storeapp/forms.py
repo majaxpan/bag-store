@@ -13,7 +13,7 @@ class ProductForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Stock'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'image': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Image URL'}),
             'chain_type': forms.Select(attrs={'class': 'form-control'}),
             'size_type': forms.Select(attrs={'class': 'form-control'}),
             'color': forms.Select(attrs={'class': 'form-control'}),
