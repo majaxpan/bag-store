@@ -1,1 +1,1 @@
-web: web: gunicorn storeproject.wsgi
+ web: gunicorn storeproject.wsgi
